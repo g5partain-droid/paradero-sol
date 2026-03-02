@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Paradero — Housekeeping</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sand: #F2EDE4;
+    --sand-dark: #E8E0D4;
+    --terracotta: #C4714A;
+    --terracotta-light: #D4845E;
+    --sage: #7A8C6E;
+    --sage-light: #9AAD8C;
+    --charcoal: #2C2A27;
+    --warm-gray: #6B6560;
+    --white: #FDFAF6;
+    --gold: #B8973A;
+    --alert: #C44A4A;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: var(--sand);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--charcoal);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 0;
+  }
+
+  .phone-wrap {
+    width: 100%;
+    max-width: 430px;
+    min-height: 100vh;
+    background: var(--white);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--charcoal);
+    padding: 52px 24px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    background: rgba(196, 113, 74, 0.15);
+  }
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+  .hotel-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+  .staff-badge {
+    background: rgba(196,113,74,0.25);
+    border: 1px solid rgba(196,113,74,0.4);
+    color: var(--terracotta-light);
+    font-size: 11px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.05em;
+  }
+  .greeting {
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--white);
+    margin-bottom: 4px;
+  }
+  .date-line {
+    font-size: 12px;
+    color: rgba(255,255,255,0.45);
+    font-weight: 300;
+  }
+
+  /* STATS BAR */
+  .stats-bar {
+    background: var(--charcoal);
+    padding: 0 24px 20px;
+    display: flex;
+    gap: 0;
+  }
+  .stat {
+    flex: 1;
+    text-align: center;
+  }
+  .stat:not(:last-child) {
+    border-right: 1px solid rgba(255,255,255,0.08);
+  }
+  .stat-num {
+    font-size: 24px;
+    font-weight: 500;
+    color: var(--white);
+    display: block;
+  }
+  .stat-label {
+    font-size: 10px;
+    color: rgba(255,255,255,0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .stat-num.done { color: var(--sage-light); }
+  .stat-num.pending { color: var(--terracotta-light); }
+
+  /* SECTIONS */
+  .section {
+    padding: 20px 20px 0;
+  }
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--warm-gray);
+  }
+  .section-action {
+    font-size: 11px;
+    color: var(--terracotta);
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  /* ROOM CARDS */
+  .room-card {
+    background: var(--white);
+    border: 1.5px solid var(--sand-dark);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 10px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .room-card:active { transform: scale(0.98); }
+  .room-card.active {
+    border-color: var(--terracotta);
+    background: #FFF9F6;
+  }
+  .room-card.complete {
+    border-color: var(--sage);
+    background: #F6FAF5;
+    opacity: 0.75;
+  }
+  .room-card.vip::before {
+    content: 'RETURNING GUEST';
+    position: absolute;
+    top: 12px; right: 12px;
+    background: var(--gold);
+    color: white;
+    font-size: 8px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    padding: 3px 8px;
+    border-radius: 10px;
+  }
+
+  .room-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+  }
+  .room-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: var(--charcoal);
+    line-height: 1;
+  }
+  .room-type {
+    font-size: 11px;
+    color: var(--warm-gray);
+    margin-top: 2px;
+  }
+  .status-pill {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .status-pill.checkout { background: #FEF0EB; color: var(--terracotta); }
+  .status-pill.stayover { background: #EBF5F0; color: var(--sage); }
+  .status-pill.cleaning { background: #FFF3E0; color: #E68A00; }
+  .status-pill.ready { background: #EBF5F0; color: var(--sage); }
+
+  .room-meta {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 8px;
+  }
+  .room-meta-item {
+    font-size: 11px;
+    color: var(--warm-gray);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .room-meta-item svg { opacity: 0.6; }
+
+  .guest-note {
+    background: #FFF8F0;
+    border-left: 3px solid var(--gold);
+    padding: 8px 10px;
+    border-radius: 0 8px 8px 0;
+    font-size: 11px;
+    color: var(--charcoal);
+    line-height: 1.5;
+    margin-bottom: 8px;
+  }
+  .guest-note strong {
+    color: var(--gold);
+    font-weight: 600;
+    display: block;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 2px;
+  }
+
+  .timer-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .timer {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--terracotta);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .timer.done { color: var(--sage); }
+  .timer-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--terracotta);
+    animation: pulse 1.5s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .start-btn {
+    background: var(--terracotta);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .start-btn:active { background: var(--terracotta-light); }
+  .start-btn.secondary {
+    background: transparent;
+    color: var(--terracotta);
+    border: 1.5px solid var(--terracotta);
+  }
+  .start-btn.done-btn {
+    background: var(--sage);
+  }
+
+  /* CHECKLIST VIEW */
+  .checklist-overlay {
+    position: fixed;
+    top: 0; left: 50%; transform: translateX(-50%);
+    width: 100%; max-width: 430px;
+    height: 100%;
+    background: var(--white);
+    z-index: 100;
+    overflow-y: auto;
+    display: none;
+    flex-direction: column;
+  }
+  .checklist-overlay.show { display: flex; }
+
+  .checklist-header {
+    background: var(--charcoal);
+    padding: 52px 24px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .back-btn {
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.6);
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 12px;
+    padding: 0;
+  }
+  .checklist-room-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    color: white;
+    margin-bottom: 4px;
+  }
+  .checklist-subtitle {
+    font-size: 12px;
+    color: rgba(255,255,255,0.45);
+  }
+  .timer-display {
+    background: rgba(196,113,74,0.15);
+    border: 1px solid rgba(196,113,74,0.3);
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-top: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .timer-label {
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .timer-count {
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--terracotta-light);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.05em;
+  }
+
+  .checklist-body { padding: 20px; flex: 1; }
+
+  .check-section {
+    margin-bottom: 24px;
+  }
+  .check-section-title {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--warm-gray);
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--sand-dark);
+  }
+
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--sand);
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .check-item:last-child { border-bottom: none; }
+  .check-item.checked { opacity: 0.5; }
+
+  .checkbox {
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    border: 2px solid var(--sand-dark);
+    background: white;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    margin-top: 1px;
+  }
+  .check-item.checked .checkbox {
+    background: var(--sage);
+    border-color: var(--sage);
+  }
+  .check-item.checked .checkbox::after {
+    content: '✓';
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .check-text {
+    flex: 1;
+  }
+  .check-label {
+    font-size: 14px;
+    color: var(--charcoal);
+    font-weight: 400;
+    line-height: 1.3;
+  }
+  .check-item.checked .check-label {
+    text-decoration: line-through;
+    color: var(--warm-gray);
+  }
+  .check-sublabel {
+    font-size: 11px;
+    color: var(--warm-gray);
+    margin-top: 2px;
+  }
+
+  .preference-tag {
+    display: inline-block;
+    background: #FFF3E0;
+    color: #B87A00;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-top: 4px;
+    letter-spacing: 0.05em;
+  }
+
+  /* NOTES SECTION */
+  .notes-section {
+    background: var(--sand);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+  .notes-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--warm-gray);
+    margin-bottom: 10px;
+  }
+  .note-existing {
+    background: white;
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    font-size: 12px;
+    color: var(--charcoal);
+    line-height: 1.5;
+    border-left: 3px solid var(--terracotta);
+  }
+  .note-meta {
+    font-size: 10px;
+    color: var(--warm-gray);
+    margin-top: 4px;
+  }
+  .note-input {
+    width: 100%;
+    background: white;
+    border: 1.5px solid var(--sand-dark);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--charcoal);
+    resize: none;
+    height: 72px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .note-input:focus { border-color: var(--terracotta); }
+  .note-input::placeholder { color: var(--warm-gray); opacity: 0.6; }
+
+  .add-note-btn {
+    background: var(--charcoal);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    margin-top: 8px;
+    float: right;
+  }
+
+  /* COMPLETE BUTTON */
+  .complete-section {
+    padding: 0 20px 40px;
+    clear: both;
+  }
+  .progress-bar-wrap {
+    background: var(--sand-dark);
+    border-radius: 10px;
+    height: 6px;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--sage);
+    border-radius: 10px;
+    transition: width 0.4s ease;
+  }
+  .progress-text {
+    font-size: 12px;
+    color: var(--warm-gray);
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  .complete-btn {
+    width: 100%;
+    background: var(--sage);
+    color: white;
+    border: none;
+    padding: 16px;
+    border-radius: 16px;
+    font-size: 15px;
+    font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.02em;
+  }
+  .complete-btn:disabled {
+    background: var(--sand-dark);
+    color: var(--warm-gray);
+    cursor: not-allowed;
+  }
+  .complete-btn:not(:disabled):active { transform: scale(0.98); }
+
+  /* SUCCESS STATE */
+  .success-overlay {
+    position: fixed;
+    top: 0; left: 50%; transform: translateX(-50%);
+    width: 100%; max-width: 430px;
+    height: 100%;
+    background: var(--sage);
+    z-index: 200;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px;
+  }
+  .success-overlay.show { display: flex; }
+  .success-icon {
+    font-size: 64px;
+    margin-bottom: 24px;
+  }
+  .success-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    color: white;
+    margin-bottom: 8px;
+  }
+  .success-sub {
+    font-size: 14px;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 8px;
+  }
+  .success-time {
+    font-size: 48px;
+    font-weight: 300;
+    color: white;
+    margin: 16px 0;
+    letter-spacing: 0.05em;
+  }
+  .success-time-label {
+    font-size: 12px;
+    color: rgba(255,255,255,0.6);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+  }
+  .success-note {
+    background: rgba(255,255,255,0.15);
+    border-radius: 12px;
+    padding: 12px 20px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.85);
+    margin: 20px 0;
+    line-height: 1.6;
+  }
+  .success-btn {
+    background: white;
+    color: var(--sage);
+    border: none;
+    padding: 14px 32px;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+
+  /* FLAG BUTTONS */
+  .flag-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 4px; }
+  .flag-btn { border: none; border-radius: 14px; padding: 14px 12px; font-family: 'DM Sans', sans-serif; cursor: pointer; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; font-size: 13px; font-weight: 600; transition: transform 0.15s; }
+  .flag-btn:active { transform: scale(0.97); }
+  .flag-btn span { font-size: 10px; font-weight: 400; opacity: 0.75; }
+  .flag-btn.emergency { background: #FEF0EB; color: var(--alert); border: 1.5px solid rgba(196,74,74,0.2); }
+  .flag-btn.routine { background: #EBF5F0; color: var(--sage); border: 1.5px solid rgba(122,140,110,0.2); }
+  .modal-overlay { position: fixed; top: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; height: 100%; background: rgba(44,42,39,0.6); z-index: 300; display: none; align-items: flex-end; justify-content: center; }
+  .modal-overlay.show { display: flex; }
+  .modal { background: var(--white); border-radius: 24px 24px 0 0; width: 100%; max-height: 85vh; overflow-y: auto; animation: slideUp 0.3s ease; }
+  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  .modal-header { padding: 20px 20px 16px; border-radius: 24px 24px 0 0; }
+  .emergency-header { background: #FEF0EB; }
+  .routine-header { background: #EBF5F0; }
+  .modal-title { font-size: 17px; font-weight: 600; color: var(--charcoal); margin-bottom: 4px; }
+  .modal-sub { font-size: 12px; color: var(--warm-gray); }
+  .modal-body { padding: 16px 20px; }
+  .modal-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--warm-gray); margin-bottom: 8px; }
+  .issue-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+  .issue-chip { background: var(--sand); border: 1.5px solid var(--sand-dark); border-radius: 20px; padding: 7px 14px; font-size: 12px; font-weight: 500; color: var(--charcoal); cursor: pointer; transition: all 0.15s; }
+  .issue-chip.selected { background: var(--charcoal); border-color: var(--charcoal); color: white; }
+  .photo-upload { border: 2px dashed var(--sand-dark); border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; background: var(--sand); }
+  .modal-footer { padding: 12px 20px 32px; display: flex; gap: 10px; border-top: 1px solid var(--sand-dark); }
+  .modal-cancel { flex: 1; background: var(--sand); border: none; padding: 13px; border-radius: 12px; font-size: 13px; font-weight: 500; font-family: 'DM Sans', sans-serif; color: var(--warm-gray); cursor: pointer; }
+  .modal-submit { flex: 2; border: none; padding: 13px; border-radius: 12px; font-size: 13px; font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; }
+  .emergency-submit { background: var(--alert); color: white; }
+  .routine-submit { background: var(--sage); color: white; }
+  .schedule-intel { background: var(--sand); border-radius: 12px; padding: 14px; margin-top: 14px; }
+  .intel-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--warm-gray); margin-bottom: 10px; }
+  .intel-row { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; font-size: 12px; color: var(--charcoal); line-height: 1.5; }
+  .intel-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--warm-gray); margin-top: 5px; flex-shrink: 0; }
+  .intel-dot.available { background: var(--sage); }
+  .slack-message { background: white; border-left: 4px solid #4A154B; border-radius: 8px; padding: 14px; }
+  .slack-bot-name { font-size: 13px; font-weight: 700; color: var(--charcoal); margin-bottom: 8px; }
+  .slack-text { font-size: 12px; color: var(--charcoal); line-height: 1.7; margin-bottom: 12px; }
+  .slack-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+  .slack-action { background: var(--sand); border: 1px solid var(--sand-dark); border-radius: 6px; padding: 5px 10px; font-size: 11px; font-weight: 500; color: var(--charcoal); }
+
+  /* BOTTOM NAV */
+  .bottom-nav {
+    position: sticky;
+    bottom: 0;
+    background: var(--white);
+    border-top: 1px solid var(--sand-dark);
+    display: flex;
+    padding: 12px 0 24px;
+  }
+  .nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    opacity: 0.4;
+    transition: opacity 0.2s;
+  }
+  .nav-item.active { opacity: 1; }
+  .nav-icon { font-size: 20px; }
+  .nav-label {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--charcoal);
+    letter-spacing: 0.05em;
+  }
+
+  .spacer { height: 20px; }
+</style>
+</head>
+<body>
+<div class="phone-wrap" id="mainView">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-top">
+      <div>
+        <div class="hotel-name">Paradero Todos Santos</div>
+        <div class="greeting">Buenos días, Sofia ☀️</div>
+        <div class="date-line">Thursday, February 27 · Morning shift</div>
+      </div>
+      <div class="staff-badge">Housekeeping</div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-bar">
+    <div class="stat">
+      <span class="stat-num pending">6</span>
+      <span class="stat-label">Pending</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num" style="color:#E68A00">1</span>
+      <span class="stat-label">In Progress</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num done">3</span>
+      <span class="stat-label">Complete</span>
+    </div>
+  </div>
+
+  <!-- IN PROGRESS -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-title">In Progress</span>
+    </div>
+
+    <div class="room-card active" onclick="openChecklist()">
+      <div class="room-top">
+        <div>
+          <div class="room-number">Suite 14</div>
+          <div class="room-type">Garden Suite — Soak Tub</div>
+        </div>
+        <span class="status-pill cleaning">Cleaning</span>
+      </div>
+      <div class="room-meta">
+        <div class="room-meta-item">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          Checkout 11am
+        </div>
+        <div class="room-meta-item">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          2 guests checking in at 3pm
+        </div>
+      </div>
+      <div class="guest-note">
+        <strong>⭐ Returning Guest — 3rd visit</strong>
+        Prefers extra pillows (2 additional). Blackout curtains fully closed. Sparkling water only in minibar. Celebrating anniversary — champagne + rose petals on arrival per reservations request.
+      </div>
+      <div class="timer-row">
+        <div class="timer">
+          <div class="timer-dot"></div>
+          24:17
+        </div>
+        <button class="start-btn" onclick="openChecklist()">Continue →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MY ROOMS TODAY -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-title">My Rooms Today</span>
+      <span class="section-action">See all</span>
+    </div>
+
+    <!-- Suite 21 -->
+    <div class="room-card vip">
+      <div class="room-top">
+        <div>
+          <div class="room-number">Suite 21</div>
+          <div class="room-type">Mountain Sky Suite</div>
+        </div>
+        <span class="status-pill checkout">Checkout</span>
+      </div>
+      <div class="room-meta">
+        <div class="room-meta-item">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          Priority — checkin 1pm
+        </div>
+      </div>
+      <div class="guest-note">
+        <strong>🌿 Guest Preference</strong>
+        Desk chair facing window (noted last stay). Left extra coffee pods — guest mentioned running out yesterday morning.
+      </div>
+      <div class="timer-row">
+        <div class="timer" style="color: var(--warm-gray)">Not started</div>
+        <button class="start-btn secondary">Start Timer</button>
+      </div>
+    </div>
+
+    <!-- Suite 8 -->
+    <div class="room-card">
+      <div class="room-top">
+        <div>
+          <div class="room-number">Suite 8</div>
+          <div class="room-type">Garden Suite — Hammock</div>
+        </div>
+        <span class="status-pill stayover">Stay-over</span>
+      </div>
+      <div class="room-meta">
+        <div class="room-meta-item">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          DND lifted at 10am
+        </div>
+      </div>
+      <div class="timer-row">
+        <div class="timer" style="color: var(--warm-gray)">Not started</div>
+        <button class="start-btn secondary">Start Timer</button>
+      </div>
+    </div>
+
+    <!-- Suite 3 — COMPLETE -->
+    <div class="room-card complete">
+      <div class="room-top">
+        <div>
+          <div class="room-number">Suite 3</div>
+          <div class="room-type">Garden Suite — Soak Tub</div>
+        </div>
+        <span class="status-pill ready">Ready ✓</span>
+      </div>
+      <div class="timer-row">
+        <div class="timer done">✓ Completed in 38 min</div>
+        <button class="start-btn done-btn" disabled>Done</button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="spacer"></div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav">
+    <div class="nav-item active">
+      <div class="nav-icon">🏠</div>
+      <div class="nav-label">My Rooms</div>
+    </div>
+    <div class="nav-item">
+      <div class="nav-icon">📋</div>
+      <div class="nav-label">All Rooms</div>
+    </div>
+    <div class="nav-item">
+      <div class="nav-icon">📊</div>
+      <div class="nav-label">My Stats</div>
+    </div>
+    <div class="nav-item">
+      <div class="nav-icon">💬</div>
+      <div class="nav-label">Team</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- CHECKLIST OVERLAY -->
+<div class="checklist-overlay" id="checklistView">
+
+  <div class="checklist-header">
+    <button class="back-btn" onclick="closeChecklist()">← Back to my rooms</button>
+    <div class="checklist-room-title">Suite 14</div>
+    <div class="checklist-subtitle">Garden Suite · Soak Tub · Checkout clean · Anniversary arrival</div>
+    <div class="timer-display">
+      <div>
+        <div class="timer-label">Time in room</div>
+      </div>
+      <div class="timer-count" id="liveTimer">24:17</div>
+    </div>
+  </div>
+
+  <div class="checklist-body">
+
+    <!-- GUEST PREFERENCES -->
+    <div class="check-section">
+      <div class="check-section-title">⭐ Guest Preferences — Returning Guest</div>
+
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"></div>
+        <div class="check-text">
+          <div class="check-label">Place 2 extra pillows on bed</div>
+          <span class="preference-tag">Guest preference — 3rd visit</span>
+        </div>
+      </div>
+
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"></div>
+        <div class="check-text">
+          <div class="check-label">Blackout curtains fully closed</div>
+          <span class="preference-tag">Guest preference — 3rd visit</span>
+        </div>
+      </div>
+
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"></div>
+        <div class="check-text">
+          <div class="check-label">Minibar — sparkling water only, no still</div>
+          <span class="preference-tag">Guest preference — 3rd visit</span>
+        </div>
+      </div>
+
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"></div>
+        <div class="check-text">
+          <div class="check-label">Champagne on ice + rose petals on bed</div>
+          <div class="check-sublabel">Anniversary celebration — confirmed by reservations team</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STANDARD CHECKOUT -->
+    <div class="check-section">
+      <div class="check-section-title">Checkout Clean</div>
+
+      <div class="check-item checked" onclick="toggleCheck(this)">
+        <div class="checkbox"></div>
+        <div class="check-text">
+          <div class="check-label">Strip and replace all bedding</div>
+        </div>
+      </div>
+
+      <div class="check-item checked" onclick="toggleCheck(this)">
+        <div class="checkbox"></div>
+        <div class="check-text">
+          <div class="check-label">Deep clean bathroom + replace all amenities</div>
+        </div>
+      </div>
+
+      <div class="check-item checked" onclick="toggleCheck(this)">
+        <div class="checkbox"></div>
+        <div class="check-text">
+          <div class="check-label">Mop floors, wipe all surfaces</div>
+        </div>
+      </div>
+
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"></div>
+        <div class="check-text">
+          <div class="check-label">Soak tub cleaned + bath salts placed</div>
+          <div class="check-sublabel">Check drain screen is clear</div>
+        </div>
+      </div>
+
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"></div>
+        <div class="check-text">
+          <div class="check-label">Outdoor terrace swept + furniture arranged</div>
+        </div>
+      </div>
+
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"></div>
+        <div class="check-text">
+          <div class="check-label">AC set to 72°F, filter check</div>
+        </div>
+      </div>
+
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"></div>
+        <div class="check-text">
+          <div class="check-label">All lighting functional</div>
+          <div class="check-sublabel">Report any flickering or outages</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUALITY -->
+    <div class="check-section">
+      <div class="check-section-title">Final Checks</div>
+
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"></div>
+        <div class="check-text">
+          <div class="check-label">Walk-through from guest perspective</div>
+          <div class="check-sublabel">Enter from front door, check sightlines</div>
+        </div>
+      </div>
+
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"></div>
+        <div class="check-text">
+          <div class="check-label">Welcome card placed on nightstand</div>
+        </div>
+      </div>
+
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"></div>
+        <div class="check-text">
+          <div class="check-label">Photo of room taken for record</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAINTENANCE FLAGS -->
+    <div class="check-section">
+      <div class="check-section-title">⚠️ Flag an Issue</div>
+
+      <div class="flag-buttons">
+        <button class="flag-btn emergency" onclick="showEmergency()">
+          🚨 Emergency
+          <span>Blocks next checkin</span>
+        </button>
+        <button class="flag-btn routine" onclick="showRoutine()">
+          🔧 Routine Fix
+          <span>Schedule when available</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- EMERGENCY MODAL -->
+    <div class="modal-overlay" id="emergencyModal">
+      <div class="modal">
+        <div class="modal-header emergency-header">
+          <div class="modal-title">🚨 Emergency Issue</div>
+          <div class="modal-sub">Maintenance + Front Desk alerted immediately via Slack</div>
+        </div>
+        <div class="modal-body">
+          <div class="modal-label">What's the issue?</div>
+          <div class="issue-grid">
+            <div class="issue-chip" onclick="selectIssue(this)">Plumbing leak</div>
+            <div class="issue-chip" onclick="selectIssue(this)">No hot water</div>
+            <div class="issue-chip" onclick="selectIssue(this)">AC failure</div>
+            <div class="issue-chip" onclick="selectIssue(this)">Electrical</div>
+            <div class="issue-chip" onclick="selectIssue(this)">Broken lock</div>
+            <div class="issue-chip" onclick="selectIssue(this)">Other</div>
+          </div>
+          <div class="modal-label" style="margin-top:14px">Add a photo (recommended)</div>
+          <div class="photo-upload" onclick="simulatePhoto()">
+            <div id="photoArea">
+              <div style="font-size:28px;margin-bottom:6px">📷</div>
+              <div style="font-size:12px;color:var(--warm-gray)">Tap to take photo</div>
+              <div style="font-size:10px;color:var(--warm-gray);margin-top:2px">Helps maintenance estimate time + parts needed</div>
+            </div>
+          </div>
+          <textarea class="note-input" placeholder="Describe the issue briefly..." style="margin-top:12px;height:60px"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button class="modal-cancel" onclick="hideEmergency()">Cancel</button>
+          <button class="modal-submit emergency-submit" onclick="submitEmergency()">🚨 Alert Team Now</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROUTINE MODAL -->
+    <div class="modal-overlay" id="routineModal">
+      <div class="modal">
+        <div class="modal-header routine-header">
+          <div class="modal-title">🔧 Routine Maintenance</div>
+          <div class="modal-sub">Will be scheduled during next available room gap</div>
+        </div>
+        <div class="modal-body">
+          <div class="modal-label">What needs attention?</div>
+          <div class="issue-grid">
+            <div class="issue-chip" onclick="selectIssue(this)">Grout / tile</div>
+            <div class="issue-chip" onclick="selectIssue(this)">Paint touch-up</div>
+            <div class="issue-chip" onclick="selectIssue(this)">Furniture repair</div>
+            <div class="issue-chip" onclick="selectIssue(this)">Fixture loose</div>
+            <div class="issue-chip" onclick="selectIssue(this)">Screen / door</div>
+            <div class="issue-chip" onclick="selectIssue(this)">Other</div>
+          </div>
+          <div class="modal-label" style="margin-top:14px">Add a photo</div>
+          <div class="photo-upload" onclick="simulatePhoto()">
+            <div id="photoArea2">
+              <div style="font-size:28px;margin-bottom:6px">📷</div>
+              <div style="font-size:12px;color:var(--warm-gray)">Tap to take photo</div>
+              <div style="font-size:10px;color:var(--warm-gray);margin-top:2px">AI will estimate job time · Head of maintenance reviews</div>
+            </div>
+          </div>
+          <textarea class="note-input" placeholder="Describe the issue..." style="margin-top:12px;height:60px"></textarea>
+
+          <div class="schedule-intel">
+            <div class="intel-label">🗓 Smart Scheduling</div>
+            <div class="intel-row">
+              <div class="intel-dot available"></div>
+              <div class="intel-text">Next gap: <strong>Mar 2 — Suite 14 has free night</strong> (early checkout + late checkin)</div>
+            </div>
+            <div class="intel-row">
+              <div class="intel-dot"></div>
+              <div class="intel-text">AI estimate: <strong>45–90 min job</strong> based on photo analysis</div>
+            </div>
+            <div class="intel-row">
+              <div class="intel-dot"></div>
+              <div class="intel-text">Maintenance head will confirm before scheduling</div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="modal-cancel" onclick="hideRoutine()">Cancel</button>
+          <button class="modal-submit routine-submit" onclick="submitRoutine()">Log & Schedule</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLACK ALERT PREVIEW -->
+    <div class="modal-overlay" id="slackModal">
+      <div class="modal">
+        <div class="modal-header" style="background:#4A154B;padding:16px 20px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="font-size:20px">💬</div>
+            <div>
+              <div style="font-size:13px;font-weight:600;color:white">#maintenance-alerts</div>
+              <div style="font-size:11px;color:rgba(255,255,255,0.6)">Sent to Slack now</div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-body" style="padding:16px">
+          <div class="slack-message">
+            <div class="slack-bot-name">🚨 Sol — Maintenance Agent</div>
+            <div class="slack-text">
+              <strong>EMERGENCY — Suite 14 · AC Failure</strong><br><br>
+              Reported by: Sofia (Housekeeping) at 10:47am<br>
+              Next guest arrival: 3:00pm today<br>
+              Time to resolve: <strong>4h 13min</strong><br><br>
+              📷 Photo attached — AI assessment: <em>compressor unit issue, likely refrigerant or capacitor. Est. repair time 1–2hrs.</em><br><br>
+              <strong>Warranty check:</strong> Carrier unit, Suite 14. Warranty valid through Dec 2026. <span style="color:#2eb886">⬤ COVERED</span><br>
+              Carrier Mexico service: <strong>+52-800-010-0000</strong><br>
+              Contract ref: <strong>CAR-2891-MX</strong><br><br>
+              @carlos @maintenance-team — please respond with ETA
+            </div>
+            <div class="slack-actions">
+              <div class="slack-action">✅ On it — ETA 30min</div>
+              <div class="slack-action">🔄 Reassign Guest</div>
+              <div class="slack-action">📞 Call Carrier</div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="modal-submit routine-submit" onclick="hideSlack()" style="width:100%">Done — Back to Checklist</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROUTINE LOGGED PREVIEW -->
+    <div class="modal-overlay" id="routineLoggedModal">
+      <div class="modal">
+        <div class="modal-header routine-header">
+          <div class="modal-title">✓ Issue Logged</div>
+          <div class="modal-sub">Scheduled around guest availability</div>
+        </div>
+        <div class="modal-body" style="padding:16px">
+          <div class="schedule-intel" style="margin:0">
+            <div class="intel-label">📋 Maintenance Ticket Created</div>
+            <div class="intel-row">
+              <div class="intel-dot available"></div>
+              <div class="intel-text">Issue: <strong>Grout crack — soak tub, Suite 14</strong></div>
+            </div>
+            <div class="intel-row">
+              <div class="intel-dot available"></div>
+              <div class="intel-text">Scheduled: <strong>March 2 · 11am–1pm</strong></div>
+            </div>
+            <div class="intel-row">
+              <div class="intel-dot available"></div>
+              <div class="intel-text">Gap confirmed: checkout 10am, next arrival 4pm</div>
+            </div>
+            <div class="intel-row">
+              <div class="intel-dot"></div>
+              <div class="intel-text">AI estimate: <strong>45–60 min</strong> · grout + reseal</div>
+            </div>
+            <div class="intel-row">
+              <div class="intel-dot"></div>
+              <div class="intel-text">Carlos (maintenance) reviewing photo now</div>
+            </div>
+          </div>
+          <div style="font-size:11px;color:var(--warm-gray);margin-top:12px;line-height:1.6;text-align:center">
+            Guest in Suite 14 will never know this existed.<br>That's the point.
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="modal-submit routine-submit" onclick="hideRoutineLogged()" style="width:100%">Perfect — Back to Checklist</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- NOTES -->
+    <div class="notes-section">
+      <div class="notes-label">Room Notes & Guest Observations</div>
+
+      <div class="note-existing">
+        Left extra coffee pods in the drawer — guest mentioned running out on day 2 of last stay. Have stocked 6 total.
+        <div class="note-meta">Added by Sofia · Today 9:14am</div>
+      </div>
+
+      <div class="note-existing">
+        Desk chair moved to face window — guest repositioned it themselves last stay, set it up that way from the start this time.
+        <div class="note-meta">Added by Sofia · Feb 19 · <span style="color:var(--gold)">Saved to guest profile ✓</span></div>
+      </div>
+
+      <textarea class="note-input" placeholder="Note a guest preference, something you observed, or anything the team should know about this room or guest..."></textarea>
+      <button class="add-note-btn">Save Note</button>
+    </div>
+
+    <div style="clear:both; height: 8px;"></div>
+
+    <!-- PROGRESS + COMPLETE -->
+    <div class="complete-section">
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="progressFill" style="width: 45%"></div>
+      </div>
+      <div class="progress-text" id="progressText">5 of 11 items complete</div>
+      <button class="complete-btn" id="completeBtn" disabled onclick="markComplete()">
+        Mark Suite 14 as Ready
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- SUCCESS OVERLAY -->
+<div class="success-overlay" id="successView">
+  <div class="success-icon">✓</div>
+  <div class="success-title">Suite 14 Ready</div>
+  <div class="success-sub">Front desk has been notified</div>
+  <div class="success-time" id="finalTime">46:32</div>
+  <div class="success-time-label">Total cleaning time</div>
+  <div class="success-note">
+    All guest preferences confirmed. Anniversary setup complete. Room logged as ready at 11:52am — 68 minutes before guest arrival.
+  </div>
+  <button class="success-btn" onclick="closeSuccess()">Back to My Rooms</button>
+</div>
+
+<script>
+  // Timer
+  let seconds = 24 * 60 + 17;
+  let timerInterval = setInterval(() => {
+    seconds++;
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    const display = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    const el = document.getElementById('liveTimer');
+    if (el) el.textContent = display;
+  }, 1000);
+
+  function openChecklist() {
+    document.getElementById('checklistView').classList.add('show');
+    updateProgress();
+  }
+
+  function closeChecklist() {
+    document.getElementById('checklistView').classList.remove('show');
+  }
+
+  function toggleCheck(el) {
+    el.classList.toggle('checked');
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const items = document.querySelectorAll('#checklistView .check-item');
+    const checked = document.querySelectorAll('#checklistView .check-item.checked');
+    const pct = Math.round((checked.length / items.length) * 100);
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressText').textContent = `${checked.length} of ${items.length} items complete`;
+    const btn = document.getElementById('completeBtn');
+    btn.disabled = pct < 100;
+  }
+
+  function markComplete() {
+    clearInterval(timerInterval);
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    document.getElementById('finalTime').textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    document.getElementById('checklistView').classList.remove('show');
+    document.getElementById('successView').classList.add('show');
+  }
+
+  function closeSuccess() {
+    document.getElementById('successView').classList.remove('show');
+  }
+
+  function showEmergency() { document.getElementById('emergencyModal').classList.add('show'); }
+  function showRoutine() { document.getElementById('routineModal').classList.add('show'); }
+  function hideModal(id) { document.getElementById(id).classList.remove('show'); }
+  function selectIssue(el) {
+    el.closest('.issue-grid').querySelectorAll('.issue-chip').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+  function simulatePhoto(modalId) {
+    const areaId = modalId === 'emergencyModal' ? 'photoArea1' : 'photoArea2';
+    document.getElementById(areaId).innerHTML = '<div style="font-size:28px;margin-bottom:6px">✅</div><div style="font-size:12px;color:var(--sage);font-weight:600">Photo captured</div><div style="font-size:10px;color:var(--warm-gray);margin-top:2px">AI analyzing...</div>';
+    setTimeout(() => {
+      document.getElementById(areaId).innerHTML = '<div style="font-size:11px;color:var(--charcoal);line-height:1.6"><strong>AI Assessment:</strong><br>Compressor unit issue detected. Likely capacitor or refrigerant. Est. repair: 1–2 hrs. Warranty check: running...</div>';
+    }, 1200);
+  }
+  function submitEmergency() {
+    hideModal('emergencyModal');
+    setTimeout(() => document.getElementById('slackModal').classList.add('show'), 200);
+  }
+  function submitRoutine() {
+    hideModal('routineModal');
+    setTimeout(() => document.getElementById('routineLoggedModal').classList.add('show'), 200);
+  }
+</script>
+
+<!-- EMERGENCY MODAL -->
+<div class="modal-overlay" id="emergencyModal">
+  <div class="modal">
+    <div class="modal-header emergency-header">
+      <div class="modal-title">🚨 Emergency Issue</div>
+      <div class="modal-sub">Maintenance + Front Desk alerted immediately via Slack</div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-label">What's the issue?</div>
+      <div class="issue-grid">
+        <div class="issue-chip" onclick="selectIssue(this)">Plumbing leak</div>
+        <div class="issue-chip" onclick="selectIssue(this)">No hot water</div>
+        <div class="issue-chip" onclick="selectIssue(this)">AC failure</div>
+        <div class="issue-chip" onclick="selectIssue(this)">Electrical</div>
+        <div class="issue-chip" onclick="selectIssue(this)">Broken lock</div>
+        <div class="issue-chip" onclick="selectIssue(this)">Other</div>
+      </div>
+      <div class="modal-label" style="margin-top:14px">Add a photo</div>
+      <div class="photo-upload" onclick="simulatePhoto('emergencyModal')">
+        <div id="photoArea1"><div style="font-size:28px;margin-bottom:6px">📷</div><div style="font-size:12px;color:var(--warm-gray)">Tap to take photo</div><div style="font-size:10px;color:var(--warm-gray);margin-top:2px">AI estimates repair time + checks warranty automatically</div></div>
+      </div>
+      <textarea class="note-input" placeholder="Describe the issue briefly..." style="margin-top:12px;height:60px"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-cancel" onclick="hideModal('emergencyModal')">Cancel</button>
+      <button class="modal-submit emergency-submit" onclick="submitEmergency()">🚨 Alert Team Now</button>
+    </div>
+  </div>
+</div>
+
+<!-- ROUTINE MODAL -->
+<div class="modal-overlay" id="routineModal">
+  <div class="modal">
+    <div class="modal-header routine-header">
+      <div class="modal-title">🔧 Routine Maintenance</div>
+      <div class="modal-sub">Scheduled intelligently around guest availability</div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-label">What needs attention?</div>
+      <div class="issue-grid">
+        <div class="issue-chip" onclick="selectIssue(this)">Grout / tile</div>
+        <div class="issue-chip" onclick="selectIssue(this)">Paint touch-up</div>
+        <div class="issue-chip" onclick="selectIssue(this)">Furniture repair</div>
+        <div class="issue-chip" onclick="selectIssue(this)">Fixture loose</div>
+        <div class="issue-chip" onclick="selectIssue(this)">Screen / door</div>
+        <div class="issue-chip" onclick="selectIssue(this)">Other</div>
+      </div>
+      <div class="modal-label" style="margin-top:14px">Add a photo</div>
+      <div class="photo-upload" onclick="simulatePhoto('routineModal')">
+        <div id="photoArea2"><div style="font-size:28px;margin-bottom:6px">📷</div><div style="font-size:12px;color:var(--warm-gray)">Tap to take photo</div><div style="font-size:10px;color:var(--warm-gray);margin-top:2px">AI estimates job time · Head of maintenance reviews before scheduling</div></div>
+      </div>
+      <textarea class="note-input" placeholder="Describe the issue..." style="margin-top:12px;height:60px"></textarea>
+      <div class="schedule-intel">
+        <div class="intel-label">🗓 Smart Scheduling</div>
+        <div class="intel-row"><div class="intel-dot available"></div><div class="intel-text">Next gap: <strong>Mar 2 — Suite 14 has free night</strong> (early checkout + late checkin)</div></div>
+        <div class="intel-row"><div class="intel-dot"></div><div class="intel-text">AI estimate: <strong>45–90 min job</strong> based on photo + issue type</div></div>
+        <div class="intel-row"><div class="intel-dot"></div><div class="intel-text">Maintenance head confirms before it's locked in</div></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-cancel" onclick="hideModal('routineModal')">Cancel</button>
+      <button class="modal-submit routine-submit" onclick="submitRoutine()">Log & Schedule</button>
+    </div>
+  </div>
+</div>
+
+<!-- SLACK ALERT PREVIEW -->
+<div class="modal-overlay" id="slackModal">
+  <div class="modal">
+    <div class="modal-header" style="background:#4A154B;padding:16px 20px;border-radius:24px 24px 0 0">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="font-size:22px">💬</div>
+        <div><div style="font-size:13px;font-weight:600;color:white">#maintenance-alerts · sent now</div><div style="font-size:11px;color:rgba(255,255,255,0.55)">Carlos + maintenance team notified</div></div>
+      </div>
+    </div>
+    <div class="modal-body" style="padding:16px">
+      <div class="slack-message">
+        <div class="slack-bot-name">🚨 Sol — Maintenance Agent</div>
+        <div class="slack-text">
+          <strong>EMERGENCY — Suite 14 · AC Failure</strong><br><br>
+          Reported by Sofia (Housekeeping) · 10:47am<br>
+          📷 Photo analyzed: <em>compressor unit. Likely capacitor or refrigerant issue. Est. repair: 1–2hrs.</em><br><br>
+          Next guest arrival: <strong>3:00pm today · 4h 13min window</strong><br><br>
+          <strong>⬤ WARRANTY CHECK: COVERED</strong><br>
+          Carrier · valid through Dec 2026<br>
+          Service line: +52-800-010-0000<br>
+          Ref: CAR-2891-MX · Do NOT pay out of pocket<br><br>
+          @carlos @maintenance — reply with ETA
+        </div>
+        <div class="slack-actions">
+          <div class="slack-action">✅ On it — 30min</div>
+          <div class="slack-action">🔄 Move guest</div>
+          <div class="slack-action">📞 Call Carrier</div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-submit routine-submit" onclick="hideModal('slackModal')" style="width:100%">Done — Back to Checklist</button>
+    </div>
+  </div>
+</div>
+
+<!-- ROUTINE LOGGED -->
+<div class="modal-overlay" id="routineLoggedModal">
+  <div class="modal">
+    <div class="modal-header routine-header">
+      <div class="modal-title">✓ Logged & Scheduled</div>
+      <div class="modal-sub">Guest will never know this existed</div>
+    </div>
+    <div class="modal-body" style="padding:16px">
+      <div class="schedule-intel" style="margin:0">
+        <div class="intel-label">📋 Maintenance Ticket</div>
+        <div class="intel-row"><div class="intel-dot available"></div><div class="intel-text">Issue: <strong>Grout crack — soak tub</strong></div></div>
+        <div class="intel-row"><div class="intel-dot available"></div><div class="intel-text">Scheduled: <strong>March 2 · 11am–1pm</strong></div></div>
+        <div class="intel-row"><div class="intel-dot available"></div><div class="intel-text">Gap confirmed from Opera: checkout 10am, next arrival 4pm</div></div>
+        <div class="intel-row"><div class="intel-dot"></div><div class="intel-text">AI estimate: <strong>45–60 min</strong></div></div>
+        <div class="intel-row"><div class="intel-dot"></div><div class="intel-text">Carlos reviewing photo now to confirm</div></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-submit routine-submit" onclick="hideModal('routineLoggedModal')" style="width:100%">Perfect</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
