@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Warren — Warranty Agent</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sand: #F2EDE4;
+    --sand-dark: #E8E0D4;
+    --charcoal: #2C2A27;
+    --warm-gray: #6B6560;
+    --white: #FDFAF6;
+    --gold: #B8973A;
+    --sage: #7A8C6E;
+    --sage-light: #9AAD8C;
+    --alert: #C44A4A;
+    --terracotta: #C4714A;
+    --slack-purple: #4A154B;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    background: var(--sand);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--charcoal);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 0;
+  }
+  .wrap {
+    width: 100%;
+    max-width: 480px;
+    min-height: 100vh;
+    background: var(--white);
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--charcoal);
+    padding: 48px 24px 24px;
+  }
+  .agent-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: rgba(255,255,255,0.35);
+    margin-bottom: 6px;
+  }
+  .agent-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    color: white;
+    margin-bottom: 4px;
+  }
+  .agent-sub {
+    font-size: 12px;
+    color: rgba(255,255,255,0.45);
+    line-height: 1.5;
+  }
+  .savings-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(184,151,58,0.2);
+    border: 1px solid rgba(184,151,58,0.35);
+    color: var(--gold);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 20px;
+    margin-top: 14px;
+  }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    background: var(--charcoal);
+    padding: 0 24px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .tab {
+    flex: 1;
+    text-align: center;
+    padding: 12px 0;
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.4);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+  .tab.active {
+    color: var(--terracotta);
+    border-bottom-color: var(--terracotta);
+  }
+
+  /* CONTENT */
+  .tab-content { display: none; padding: 24px; }
+  .tab-content.show { display: block; }
+
+  /* SCENARIO LABEL */
+  .scenario-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--warm-gray);
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--sand-dark);
+  }
+
+  /* TRIGGER CARD */
+  .trigger-card {
+    background: #FEF0EB;
+    border: 1.5px solid rgba(196,74,74,0.2);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .trigger-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--alert);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+  }
+  .trigger-text {
+    font-size: 13px;
+    color: var(--charcoal);
+    line-height: 1.6;
+  }
+
+  /* FLOW ARROW */
+  .flow-arrow {
+    text-align: center;
+    font-size: 18px;
+    color: var(--sand-dark);
+    margin: 8px 0;
+  }
+
+  /* SLACK MESSAGE */
+  .slack-wrap {
+    background: #1A1D21;
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+  .slack-header {
+    background: var(--slack-purple);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .slack-channel {
+    font-size: 13px;
+    font-weight: 600;
+    color: white;
+  }
+  .slack-time {
+    font-size: 11px;
+    color: rgba(255,255,255,0.45);
+    margin-left: auto;
+  }
+  .slack-body {
+    padding: 16px;
+  }
+  .slack-bot-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .slack-bot-icon {
+    width: 32px; height: 32px;
+    background: rgba(184,151,58,0.2);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+  }
+  .slack-bot-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: white;
+  }
+  .slack-bot-badge {
+    background: rgba(184,151,58,0.3);
+    color: var(--gold);
+    font-size: 9px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .slack-msg {
+    font-size: 13px;
+    color: #D1D2D3;
+    line-height: 1.8;
+  }
+  .slack-msg strong { color: white; }
+  .slack-msg .covered { color: #4AC97E; font-weight: 700; }
+  .slack-msg .warning { color: #FFB347; font-weight: 700; }
+  .slack-msg .alert { color: #FF6B6B; font-weight: 700; }
+  .slack-divider {
+    border: none;
+    border-top: 1px solid rgba(255,255,255,0.07);
+    margin: 12px 0;
+  }
+  .slack-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 12px;
+  }
+  .slack-btn {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 11px;
+    font-weight: 500;
+    color: #D1D2D3;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: background 0.15s;
+  }
+  .slack-btn:hover { background: rgba(255,255,255,0.14); }
+  .slack-btn.primary {
+    background: rgba(74,197,126,0.2);
+    border-color: rgba(74,197,126,0.3);
+    color: #4AC97E;
+  }
+
+  /* SAVINGS MATH */
+  .savings-math {
+    background: var(--sand);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .savings-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--sand-dark);
+    font-size: 13px;
+  }
+  .savings-row:last-child { border-bottom: none; }
+  .savings-row .label { color: var(--warm-gray); }
+  .savings-row .value { font-weight: 600; }
+  .savings-row .value.crossed {
+    text-decoration: line-through;
+    color: var(--alert);
+    font-weight: 400;
+  }
+  .savings-row .value.saved { color: var(--sage); }
+  .savings-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--charcoal);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-top: 12px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .savings-total .label { color: rgba(255,255,255,0.6); }
+  .savings-total .value { color: var(--gold); font-size: 18px; }
+
+  /* PROACTIVE REPORT */
+  .report-header {
+    background: var(--sand);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .report-icon {
+    width: 40px; height: 40px;
+    background: var(--charcoal);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .report-title { font-size: 14px; font-weight: 600; }
+  .report-sub { font-size: 11px; color: var(--warm-gray); margin-top: 2px; }
+
+  .equipment-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+  .equipment-item {
+    background: var(--white);
+    border: 1.5px solid var(--sand-dark);
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .equipment-item.expiring { border-color: rgba(255,179,71,0.4); background: #FFFCF0; }
+  .equipment-item.overdue { border-color: rgba(196,74,74,0.3); background: #FEF8F8; }
+  .equipment-item.ok { border-color: rgba(122,140,110,0.3); background: #F6FAF5; }
+  .equip-icon { font-size: 22px; flex-shrink: 0; }
+  .equip-info { flex: 1; }
+  .equip-name { font-size: 13px; font-weight: 600; }
+  .equip-detail { font-size: 11px; color: var(--warm-gray); margin-top: 2px; }
+  .equip-status {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    flex-shrink: 0;
+  }
+  .equip-status.expiring { background: rgba(255,179,71,0.2); color: #B8860B; }
+  .equip-status.overdue { background: rgba(196,74,74,0.15); color: var(--alert); }
+  .equip-status.ok { background: rgba(122,140,110,0.15); color: var(--sage); }
+  .equip-value {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--gold);
+    text-align: right;
+    margin-top: 2px;
+  }
+
+  /* ANNUAL SUMMARY */
+  .annual-box {
+    background: var(--charcoal);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .annual-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: rgba(255,255,255,0.35);
+    margin-bottom: 16px;
+  }
+  .annual-stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .annual-stat:last-child { margin-bottom: 0; }
+  .annual-label { font-size: 13px; color: rgba(255,255,255,0.55); }
+  .annual-value { font-size: 18px; font-weight: 600; color: white; }
+  .annual-value.gold { color: var(--gold); }
+  .annual-value.sage { color: var(--sage-light); }
+  .annual-divider { border: none; border-top: 1px solid rgba(255,255,255,0.07); margin: 12px 0; }
+
+  /* CALLOUT */
+  .callout {
+    background: #F0FFF4;
+    border: 1.5px solid rgba(74,201,126,0.3);
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 13px;
+    color: var(--charcoal);
+    line-height: 1.6;
+  }
+  .callout strong { color: var(--sage); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="header">
+    <div class="agent-label">Paradero AI · Warranty Agent</div>
+    <div class="agent-name">Warren</div>
+    <div class="agent-sub">Monitors every piece of equipment. Catches warranty coverage before anyone pays out of pocket. Flags what's expiring before it fails.</div>
+    <div class="savings-badge">💰 Est. $20–40K recovered annually</div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('reactive')">🚨 Reactive</div>
+    <div class="tab" onclick="showTab('proactive')">📋 Proactive</div>
+  </div>
+
+  <!-- REACTIVE TAB -->
+  <div class="tab-content show" id="tab-reactive">
+    <div class="scenario-label">Scenario: AC fails in Suite 21 · 11:23am Monday</div>
+
+    <div class="trigger-card">
+      <div class="trigger-title">🚨 Trigger — Sol flags emergency</div>
+      <div class="trigger-text">Sofia (Housekeeping) flags AC failure in Suite 21 via Sol app. Photo analyzed. Sol fires to #maintenance-alerts. <strong>Warren runs automatically.</strong></div>
+    </div>
+
+    <div class="flow-arrow">↓ Warren checks equipment database ↓</div>
+
+    <div class="slack-wrap">
+      <div class="slack-header">
+        <div style="font-size:18px">💬</div>
+        <div class="slack-channel">#maintenance-alerts</div>
+        <div class="slack-time">11:23am</div>
+      </div>
+      <div class="slack-body">
+        <div class="slack-bot-row">
+          <div class="slack-bot-icon">⚙️</div>
+          <div>
+            <div style="display:flex;align-items:center;gap:6px">
+              <span class="slack-bot-name">Warren</span>
+              <span class="slack-bot-badge">Warranty Agent</span>
+            </div>
+          </div>
+        </div>
+        <div class="slack-msg">
+          <strong>WARRANTY CHECK — Suite 21 AC Unit</strong><br><br>
+          Unit: <strong>Carrier 24ACC636A003</strong><br>
+          Installed: March 2022 · Suite 21<br><br>
+          <hr class="slack-divider">
+          Status: <span class="covered">✓ COVERED — Valid through June 2026</span><br>
+          Coverage: Parts + labor, compressor included<br>
+          Vendor: Carrier México<br>
+          Service line: <strong>+52 800 010-0000</strong><br>
+          Ref code: <strong>CAR-3847-MX</strong><br><br>
+          <hr class="slack-divider">
+          <span class="warning">⚠️ DO NOT PAY OUT OF POCKET</span><br>
+          Est. repair cost if unclaimed: <strong>$1,200–1,800 USD</strong><br>
+          Cost with warranty claim: <strong>$0</strong>
+        </div>
+        <div class="slack-actions">
+          <button class="slack-btn primary">✓ Claim opened</button>
+          <button class="slack-btn">📞 Call Carrier now</button>
+          <button class="slack-btn">📋 View warranty doc</button>
+          <button class="slack-btn">🔄 Reassign guest</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="savings-math">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--warm-gray);margin-bottom:12px">This repair · before vs. after Warren</div>
+      <div class="savings-row">
+        <span class="label">Parts (compressor capacitor)</span>
+        <span class="value crossed">$450</span>
+      </div>
+      <div class="savings-row">
+        <span class="label">Labor (2hrs @ $150/hr)</span>
+        <span class="value crossed">$300</span>
+      </div>
+      <div class="savings-row">
+        <span class="label">Emergency callout fee</span>
+        <span class="value crossed">$200</span>
+      </div>
+      <div class="savings-row">
+        <span class="label">Parts markup (vendor)</span>
+        <span class="value crossed">$350</span>
+      </div>
+      <div class="savings-total">
+        <span class="label">Total saved this repair</span>
+        <span class="value">$1,300 USD</span>
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>The line for Friday:</strong> "Before Warren, maintenance calls the vendor, pays the invoice, expenses hit the P&amp;L. Nobody has time to check if it was covered. After Warren — same repair, same day, zero cost. Carrier called, reference logged, claim filed automatically."
+    </div>
+  </div>
+
+  <!-- PROACTIVE TAB -->
+  <div class="tab-content" id="tab-proactive">
+    <div class="scenario-label">Monday Morning Report · Auto-generated 7:00am weekly</div>
+
+    <div class="report-header">
+      <div class="report-icon">📋</div>
+      <div>
+        <div class="report-title">Warren Weekly — March 3, 2025</div>
+        <div class="report-sub">6 items require attention · Est. $8,400 at risk this month</div>
+      </div>
+    </div>
+
+    <div class="slack-wrap" style="margin-bottom:16px">
+      <div class="slack-header">
+        <div style="font-size:18px">💬</div>
+        <div class="slack-channel">#management · Warren Weekly</div>
+        <div class="slack-time">7:00am Mon</div>
+      </div>
+      <div class="slack-body">
+        <div class="slack-bot-row">
+          <div class="slack-bot-icon">⚙️</div>
+          <div>
+            <div style="display:flex;align-items:center;gap:6px">
+              <span class="slack-bot-name">Warren</span>
+              <span class="slack-bot-badge">Weekly Report</span>
+            </div>
+          </div>
+        </div>
+        <div class="slack-msg">
+          Good morning. Here's your equipment status for the week.<br><br>
+          <span class="alert">🔴 2 warranties expiring in 30 days</span><br>
+          <span class="warning">🟡 1 unit overdue for service</span><br>
+          <span class="covered">🟢 47 units — no action needed</span><br><br>
+          <strong>Action required before Friday:</strong><br>
+          Renew Bosch pool pump warranty (Suite 8 area) — expires Mar 28<br>
+          Schedule overdue AC service — Suite 3 (last service: 14 months ago)<br><br>
+          Est. exposure if not addressed: <strong>$8,400</strong>
+        </div>
+        <div class="slack-actions">
+          <button class="slack-btn primary">View full report</button>
+          <button class="slack-btn">Mark all reviewed</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="equipment-list">
+      <div class="equipment-item expiring">
+        <div class="equip-icon">🌊</div>
+        <div class="equip-info">
+          <div class="equip-name">Bosch Pool Pump · Suite 8 Area</div>
+          <div class="equip-detail">Installed Jan 2022 · Warranty expires Mar 28</div>
+          <div class="equip-value">Coverage value: ~$2,800</div>
+        </div>
+        <div class="equip-status expiring">25 days</div>
+      </div>
+
+      <div class="equipment-item expiring">
+        <div class="equip-icon">❄️</div>
+        <div class="equip-info">
+          <div class="equip-name">Carrier AC · Suite 12</div>
+          <div class="equip-detail">Installed Feb 2022 · Warranty expires Apr 4</div>
+          <div class="equip-value">Coverage value: ~$1,600</div>
+        </div>
+        <div class="equip-status expiring">32 days</div>
+      </div>
+
+      <div class="equipment-item overdue">
+        <div class="equip-icon">🌡️</div>
+        <div class="equip-info">
+          <div class="equip-name">Carrier AC · Suite 3</div>
+          <div class="equip-detail">Last service: Jan 2024 — 14 months overdue</div>
+          <div class="equip-value">Risk: voids warranty if fails unserviced</div>
+        </div>
+        <div class="equip-status overdue">Overdue</div>
+      </div>
+
+      <div class="equipment-item ok">
+        <div class="equip-icon">🔥</div>
+        <div class="equip-info">
+          <div class="equip-name">Rheem Water Heater · Suites 1–8</div>
+          <div class="equip-detail">Last service: Nov 2024 · Next: Nov 2025</div>
+          <div class="equip-value">Coverage: active through 2027</div>
+        </div>
+        <div class="equip-status ok">Good</div>
+      </div>
+    </div>
+
+    <div class="annual-box">
+      <div class="annual-title">Warren · Year-to-date · 2025</div>
+      <div class="annual-stat">
+        <span class="annual-label">Warranty claims filed</span>
+        <span class="annual-value">7</span>
+      </div>
+      <div class="annual-stat">
+        <span class="annual-label">Total recovered</span>
+        <span class="annual-value gold">$14,200</span>
+      </div>
+      <hr class="annual-divider">
+      <div class="annual-stat">
+        <span class="annual-label">Preventive services scheduled</span>
+        <span class="annual-value">12</span>
+      </div>
+      <div class="annual-stat">
+        <span class="annual-label">Equipment failures avoided</span>
+        <span class="annual-value sage">Est. 3–4</span>
+      </div>
+      <hr class="annual-divider">
+      <div class="annual-stat">
+        <span class="annual-label">Platform cost YTD</span>
+        <span class="annual-value" style="color:rgba(255,255,255,0.4);font-size:14px">~$3,000</span>
+      </div>
+      <div class="annual-stat">
+        <span class="annual-label">Warren alone: ROI</span>
+        <span class="annual-value gold">4.7×</span>
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>The moment for Andre:</strong> "Paradero currently has no system that knows when any piece of equipment was last serviced or when its warranty expires. That number — $14,200 recovered — is what was sitting on the table, unclaimed, in the first 8 months. The second year is bigger because Warren knows the whole history."
+    </div>
+  </div>
+
+</div>
+
+<script>
+function showTab(name) {
+  document.querySelectorAll('.tab').forEach((t,i) => {
+    t.classList.toggle('active', ['reactive','proactive'][i] === name);
+  });
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('show'));
+  document.getElementById('tab-' + name).classList.add('show');
+}
+</script>
+</body>
+</html>

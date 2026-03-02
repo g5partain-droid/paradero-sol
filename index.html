@@ -613,6 +613,133 @@
     margin-top: 8px;
   }
 
+  /* GAMIFICATION BAR */
+  .gamification-bar {
+    background: var(--charcoal);
+    padding: 0 20px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .gami-card {
+    background: rgba(255,255,255,0.06);
+    border-radius: 16px;
+    padding: 14px 16px;
+  }
+  .gami-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .gami-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .gami-avatar {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--terracotta);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; color: white;
+  }
+  .gami-streak {
+    font-size: 12px;
+    color: #FFB347;
+    font-weight: 600;
+  }
+  .gami-progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: rgba(255,255,255,0.45);
+    margin-bottom: 5px;
+  }
+  .gami-progress-track {
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    height: 5px;
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  .gami-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--terracotta), var(--gold));
+    border-radius: 10px;
+    width: 49%;
+  }
+  .milestone-scroll {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .milestone-scroll::-webkit-scrollbar { display: none; }
+  .milestone-pill {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .milestone-pill.done {
+    background: rgba(122,140,110,0.25);
+    color: var(--sage-light);
+  }
+  .milestone-pill.active {
+    background: rgba(196,113,74,0.3);
+    color: var(--terracotta-light);
+    border: 1px solid rgba(196,113,74,0.4);
+  }
+  .milestone-pill.locked {
+    background: rgba(255,255,255,0.05);
+    color: rgba(255,255,255,0.25);
+  }
+  .gami-activity {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .activity-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 10px;
+    color: rgba(255,255,255,0.4);
+  }
+  .activity-pts {
+    color: var(--gold);
+    font-weight: 700;
+    font-size: 11px;
+    flex-shrink: 0;
+  }
+  .gami-note {
+    font-size: 9px;
+    color: rgba(255,255,255,0.2);
+    text-align: center;
+    margin-top: 8px;
+    font-style: italic;
+  }
+
+  .analyzing-spinner {
+    width: 16px; height: 16px;
+    border: 2px solid rgba(196,74,74,0.2);
+    border-top-color: var(--alert);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    flex-shrink: 0;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
   /* FLAG BUTTONS */
   .flag-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 4px; }
   .flag-btn { border: none; border-radius: 14px; padding: 14px 12px; font-family: 'DM Sans', sans-serif; cursor: pointer; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; font-size: 13px; font-weight: 600; transition: transform 0.15s; }
@@ -710,6 +837,39 @@
     <div class="stat">
       <span class="stat-num done">3</span>
       <span class="stat-label">Complete</span>
+    </div>
+  </div>
+
+  <!-- GAMIFICATION BAR -->
+  <div class="gamification-bar">
+    <div class="gami-card">
+      <div class="gami-top">
+        <div class="gami-name">
+          <div class="gami-avatar">S</div>
+          Sofia
+        </div>
+        <div class="gami-streak">🔥 9-day streak</div>
+      </div>
+      <div class="gami-progress-label">
+        <span>247 pts</span>
+        <span>→ Dinner at Tenoch · 500 pts</span>
+      </div>
+      <div class="gami-progress-track">
+        <div class="gami-progress-fill"></div>
+      </div>
+      <div class="milestone-scroll">
+        <div class="milestone-pill done">✓ Thank-you note</div>
+        <div class="milestone-pill done">✓ Early Friday</div>
+        <div class="milestone-pill active">→ Dinner at Tenoch</div>
+        <div class="milestone-pill locked">🔒 Suite night</div>
+        <div class="milestone-pill locked">🔒 Bonus + wall</div>
+      </div>
+      <div class="gami-activity">
+        <div class="activity-row"><span class="activity-pts">+20 pts</span> Guest preference noted — Suite 12 · 9:14am</div>
+        <div class="activity-row"><span class="activity-pts">+10 pts</span> Room completed with zero skips — Suite 8 · 8:52am</div>
+        <div class="activity-row"><span class="activity-pts">+2 pts</span> Checklist item complete — Suite 8 · 8:31am</div>
+      </div>
+      <div class="gami-note">Reward thresholds set by Paradero management · customizable anytime</div>
     </div>
   </div>
 
@@ -1267,10 +1427,17 @@
   }
   function simulatePhoto(modalId) {
     const areaId = modalId === 'emergencyModal' ? 'photoArea1' : 'photoArea2';
-    document.getElementById(areaId).innerHTML = '<div style="font-size:28px;margin-bottom:6px">✅</div><div style="font-size:12px;color:var(--sage);font-weight:600">Photo captured</div><div style="font-size:10px;color:var(--warm-gray);margin-top:2px">AI analyzing...</div>';
+    document.getElementById(areaId).innerHTML = '<div style="font-size:28px;margin-bottom:6px">✅</div><div style="font-size:12px;color:var(--sage);font-weight:600">Photo captured</div><div style="font-size:10px;color:var(--warm-gray);margin-top:2px">Sending to AI...</div>';
     setTimeout(() => {
-      document.getElementById(areaId).innerHTML = '<div style="font-size:11px;color:var(--charcoal);line-height:1.6"><strong>AI Assessment:</strong><br>Compressor unit issue detected. Likely capacitor or refrigerant. Est. repair: 1–2 hrs. Warranty check: running...</div>';
-    }, 1200);
+      document.getElementById(areaId).innerHTML = '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><div class="analyzing-spinner"></div><div style="font-size:12px;color:var(--terracotta);font-weight:600">Analyzing image...</div></div><div style="font-size:10px;color:var(--warm-gray)">Checking warranty database · estimating repair time</div>';
+      setTimeout(() => {
+        if (modalId === 'emergencyModal') {
+          document.getElementById(areaId).innerHTML = '<div style="font-size:11px;color:var(--charcoal);line-height:1.7"><strong style="color:var(--alert)">⚠️ AI Assessment</strong><br>Compressor unit issue detected — likely capacitor or refrigerant failure.<br><strong>Est. repair: 1–2 hrs.</strong><br><span style="color:var(--sage);font-weight:600">✓ WARRANTY ACTIVE — Carrier through Dec 2026</span></div>';
+        } else {
+          document.getElementById(areaId).innerHTML = '<div style="font-size:11px;color:var(--charcoal);line-height:1.7"><strong>AI Assessment</strong><br>Grout crack — soak tub surround. Surface-level, non-structural.<br><strong>Est. repair: 45–60 min.</strong> Sealant + regrout.</div>';
+        }
+      }, 1800);
+    }, 600);
   }
   function submitEmergency() {
     hideModal('emergencyModal');
@@ -1354,7 +1521,7 @@
     <div class="modal-header" style="background:#4A154B;padding:16px 20px;border-radius:24px 24px 0 0">
       <div style="display:flex;align-items:center;gap:10px">
         <div style="font-size:22px">💬</div>
-        <div><div style="font-size:13px;font-weight:600;color:white">#maintenance-alerts · sent now</div><div style="font-size:11px;color:rgba(255,255,255,0.55)">Carlos + maintenance team notified</div></div>
+        <div><div style="font-size:13px;font-weight:600;color:white">#maintenance-alerts · sent now</div><div style="font-size:11px;color:rgba(255,255,255,0.55)">@maintenance-team notified</div></div>
       </div>
     </div>
     <div class="modal-body" style="padding:16px">
@@ -1369,7 +1536,7 @@
           Carrier · valid through Dec 2026<br>
           Service line: +52-800-010-0000<br>
           Ref: CAR-2891-MX · Do NOT pay out of pocket<br><br>
-          @carlos @maintenance — reply with ETA
+          @maintenance-team — reply with ETA
         </div>
         <div class="slack-actions">
           <div class="slack-action">✅ On it — 30min</div>
@@ -1398,7 +1565,7 @@
         <div class="intel-row"><div class="intel-dot available"></div><div class="intel-text">Scheduled: <strong>March 2 · 11am–1pm</strong></div></div>
         <div class="intel-row"><div class="intel-dot available"></div><div class="intel-text">Gap confirmed from Opera: checkout 10am, next arrival 4pm</div></div>
         <div class="intel-row"><div class="intel-dot"></div><div class="intel-text">AI estimate: <strong>45–60 min</strong></div></div>
-        <div class="intel-row"><div class="intel-dot"></div><div class="intel-text">Carlos reviewing photo now to confirm</div></div>
+        <div class="intel-row"><div class="intel-dot"></div><div class="intel-text">@maintenance-team reviewing photo to confirm</div></div>
       </div>
     </div>
     <div class="modal-footer">
